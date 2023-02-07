@@ -10,14 +10,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<DataContext>(options =>
+builder.Services.AddDbContext<DataContext>(opt =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Reactivities"));
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("Reactivities"));
 });
 
-builder.Services.AddDbContext<DataContext>(options =>
+builder.Services.AddCors(opt =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Reactivities"));
+    opt.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
+    });
 });
 
 var app = builder.Build();
@@ -28,6 +31,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("CorsPolicy");
 
 app.UseAuthorization();
 
