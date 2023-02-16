@@ -1,32 +1,33 @@
 import React from 'react';
-import * as semanticUiReact from 'semantic-ui-react';
-import { Activity } from '../../../app/models/activity';
+import { Button, Card, Image } from 'semantic-ui-react';
+import LoadingComponent from '../../../app/layout/LoadingComponent';
+import { useStore } from '../../../app/stores/store';
 
-interface Props {
-    activity: Activity;
-    cancelSelectActivity: () => void;
-    openForm: (id: string) => void;
-}
+export default function ActivityDetails() {
 
-export default function ActivityDetails({ activity, cancelSelectActivity, openForm }: Props) {
+    const { activityStore } = useStore();
+    const { selectedActivity, openForm, cancelSelectedActivity } = activityStore;
+
+    if (!selectedActivity) return <LoadingComponent />;
+
     return (
-        <semanticUiReact.Card fluid>
-            <semanticUiReact.Image src={`/assets/categoryImages/${activity.category}.jpg`} />
-            <semanticUiReact.Card.Content>
-                <semanticUiReact.Card.Header>{activity.title}</semanticUiReact.Card.Header>
-                <semanticUiReact.Card.Meta>
-                    <span>{activity.date}</span>
-                </semanticUiReact.Card.Meta>
-                <semanticUiReact.Card.Description>
-                    {activity.description}
-                </semanticUiReact.Card.Description>
-            </semanticUiReact.Card.Content>
-            <semanticUiReact.Card.Content extra>
-                <semanticUiReact.Button.Group widths={2}>
-                    <semanticUiReact.Button onClick={() => openForm(activity.id)} basic color='blue' content='Edit' />
-                    <semanticUiReact.Button onClick={cancelSelectActivity} basic color='grey' content='Cancel' />
-                </semanticUiReact.Button.Group>
-            </semanticUiReact.Card.Content>
-        </semanticUiReact.Card>
+        <Card fluid>
+            <Image src={`/assets/categoryImages/${selectedActivity.category}.jpg`} />
+            <Card.Content>
+                <Card.Header>{selectedActivity.title}</Card.Header>
+                <Card.Meta>
+                    <span>{selectedActivity.date}</span>
+                </Card.Meta>
+                <Card.Description>
+                    {selectedActivity.description}
+                </Card.Description>
+            </Card.Content>
+            <Card.Content extra>
+                <Button.Group widths={2}>
+                    <Button onClick={() => openForm(selectedActivity.id)} basic color='blue' content='Edit' />
+                    <Button onClick={cancelSelectedActivity} basic color='grey' content='Cancel' />
+                </Button.Group>
+            </Card.Content>
+        </Card>
     )
 }
